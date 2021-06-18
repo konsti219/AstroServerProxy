@@ -54,9 +54,7 @@ export class PlayfabManager {
         const fetchData = async () => {
 
             // generateXAUTH
-            console.log("auth1")
             await this.ensureAuth()
-            console.log("auth2")
 
             // fetch data from playfab
             const serverRes: {
@@ -159,7 +157,6 @@ export class PlayfabManager {
 
         try {
             await timeout(1000, fetchData())
-            console.log("after timeout")
         } catch (_) {
             console.warn("playfab failing")
         }
