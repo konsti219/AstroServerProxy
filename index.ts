@@ -11,10 +11,12 @@ if (proxyIn.URL) {
     console.log("got dns")
 }
 const proxyOut = {
-    port: 8777,
-    IP: "111.111.111.1",
-    localIP: "127.0.0.1"
+    port: 28300,
+    IP: "45.137.247.51",
+    localIP: "45.137.247.51"
 }
+//45.137.247.51:28300
+//111.111.111.1:8777 127.0.0.1
 
 console.log(`Proxy Server:
 in: ${proxyIn.IP}:${proxyIn.port}
@@ -39,7 +41,7 @@ setInterval(async () => {
 
         playfab.heartbeatServer(serverDataIn)
     }
-}, 5000)
+}, 30000)
 
 await playfab.registerServer(proxyIn.IP, proxyIn.port)
 
