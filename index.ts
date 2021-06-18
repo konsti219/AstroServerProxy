@@ -30,7 +30,15 @@ playfab.add(`${proxyOut.IP}:${proxyOut.port}`)
 
 setInterval(async () => {
     await playfab.update()
-    console.log(playfab.serversData)
+    //console.log(playfab.serversData)
+
+    const serverDataIn = playfab.get(`${proxyIn.IP}:${proxyIn.port}`)
+    const serverDataOut = playfab.get(`${proxyOut.IP}:${proxyOut.port}`)
+    if (serverDataIn && serverDataOut) {
+        serverDataIn.Tags.publicSigningKey = serverDataOut.Tags.publicSigningKey
+
+        playfab.heartbeatServer(serverDataIn)
+    }
 }, 5000)
 
 await playfab.registerServer(proxyIn.IP, proxyIn.port)

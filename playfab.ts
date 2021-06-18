@@ -202,7 +202,7 @@ export class PlayfabManager {
     }
 
     async registerServer(ipAddress: string, port: number) {
-        const res = await (
+        await (
             await fetch("https://5EA1.playfabapi.com/Client/ExecuteCloudScript?sdk=" + skdVersion, {
                 method: "POST",
                 body: JSON.stringify({
@@ -224,7 +224,6 @@ export class PlayfabManager {
                 headers: this.headers,
             })
         ).json();
-        console.log(res)
     }
 
     deregisterServer(IP: string) {
