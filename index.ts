@@ -43,6 +43,10 @@ setInterval(async () => {
 
 await playfab.registerServer(proxyIn.IP, proxyIn.port)
 
+
+// UDP stuff
+const sockets: Record<string, Deno.DatagramConn> = {}
+
 const proxyInConn = Deno.listenDatagram({
     port: proxyIn.port,
     transport: "udp"
@@ -50,7 +54,38 @@ const proxyInConn = Deno.listenDatagram({
 
 console.log(`Opened socket, waiting for packets`)
 for await (const packet of proxyInConn) {
-    console.log(packet)
+    const addr = packet[1] as Deno.NetAddr
+    const origin = `${addr.hostname}:${addr.port}`
+
+    // check for new socket
+    if (!sockets[origin]) {
+        // create and store socket
+        console.log("opening socket")
+        const socket = Deno.listenDatagram({
+            port: 0,
+            hostname: "0.0.0.0",
+            transport: "udp"
+        })
+
+        sockets[origin] = socket;
+
+        // detach async 
+        (async () => {
+            for await (const backPacket of socket) {
+                //console.log("server -> client", backPacket)
+                proxyInConn.send(backPacket[0], addr)
+            }
+        })()
+    }
+
+    const dest = {
+        port: proxyOut.port,
+        hostname: proxyOut.localIP,
+        transport: "udp"
+    } as Deno.NetAddr
+    sockets[origin].send(packet[0], dest)
+
+    //console.log("client -> server", packet)
 }
 
 
